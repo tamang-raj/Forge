@@ -4,6 +4,20 @@ A self-contained, in-browser code playground. Write HTML, CSS, and JavaScript in
 
 Built with **vanilla HTML, CSS, and JavaScript** — no frameworks, no build step, no dependencies.
 
+## 🌐 Live Demo
+
+🔗 **Try the application here:**
+
+**https://forge-six-delta-51.vercel.app/**
+
+> Experience the app directly in your browser—no installation required.
+
+## 📸 Preview
+
+![Forge](screenshots/preview1.png)
+![Forge](screenshots/preview2.png)
+
+
 ## Features
 
 - **Three-language editing** — separate HTML, CSS, and JS tabs, each with line numbers and lightweight syntax highlighting (tags, attributes, selectors, properties, strings, comments, keywords, numbers).
