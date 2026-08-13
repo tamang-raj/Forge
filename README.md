@@ -1,4 +1,4 @@
-# Forge — a live HTML/CSS/JS editor
+# Forge
 
 A self-contained, in-browser code playground. Write HTML, CSS, and JavaScript in three tabbed editors and watch the result render instantly in a live preview pane, complete with a console that captures `console.log`, warnings, and runtime errors from your code.
 
