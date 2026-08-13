@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Forge — live HTML/CSS/JS editor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1' y='1' width='30' height='30' rx='7' fill='%23FFFFFF' stroke='%23DFE8F7' stroke-width='1.5'/%3E%3Cpath d='M9 22V10l7 5-7 5z' fill='%232F6FED'/%3E%3Crect x='19' y='10' width='4' height='12' rx='1' fill='%23E0393A'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="22" height="22">
+          <path d="M9 22V10l7 5-7 5z" fill="var(--blue-500)"/>
+          <rect x="19" y="10" width="4" height="12" rx="1" fill="var(--red-500)"/>
+        </svg>
+      </span>
+      <span class="brand__name">Forge</span>
+      <span class="brand__tag">live editor</span>
+    </div>
+
+    <div class="topbar__actions">
+      <label class="switch" title="Run automatically as you type">
+        <input type="checkbox" id="autoRunToggle" checked />
+        <span class="switch__track"><span class="switch__thumb"></span></span>
+        <span class="switch__label">Auto-run</span>
+      </label>
+
+      <button class="btn btn--run" id="runBtn" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M6 4l14 8-14 8V4z" fill="currentColor"/></svg>
+        Run
+        <kbd>⌘⏎</kbd>
+      </button>
+
+      <div class="menu-wrap">
+        <button class="btn btn--ghost" id="exportBtn" type="button" title="Export project">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Export
+        </button>
+        <div class="export-menu" id="exportMenu" hidden>
+          <button data-export="single">Single HTML file</button>
+          <button data-export="separate">Separate files (.html/.css/.js)</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Signal bar: signature element, sweeps on run -->
+  <div class="signal" id="signalBar" aria-hidden="true"><div class="signal__sweep"></div></div>
+
+  <!-- Main split -->
+  <main class="workspace" id="workspace">
+
+    <section class="pane pane--editor" id="editorPane">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" data-lang="html" role="tab" aria-selected="true">
+          <span class="tab__dot tab__dot--html"></span>HTML
+        </button>
+        <button class="tab" data-lang="css" role="tab" aria-selected="false">
+          <span class="tab__dot tab__dot--css"></span>CSS
+        </button>
+        <button class="tab" data-lang="js" role="tab" aria-selected="false">
+          <span class="tab__dot tab__dot--js"></span>JS
+        </button>
+        <div class="tabs__spacer"></div>
+        <span class="save-state" id="saveState">saved</span>
+      </div>
+
+      <div class="editors">
+        <div class="editor is-active" data-lang="html">
+          <div class="editor__gutter" id="gutter-html"></div>
+          <div class="editor__code">
+            <pre class="editor__highlight" id="highlight-html" aria-hidden="true"></pre>
+            <textarea class="editor__input" id="input-html" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Write your HTML here…"></textarea>
+          </div>
+        </div>
+        <div class="editor" data-lang="css">
+          <div class="editor__gutter" id="gutter-css"></div>
+          <div class="editor__code">
+            <pre class="editor__highlight" id="highlight-css" aria-hidden="true"></pre>
+            <textarea class="editor__input" id="input-css" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Write your CSS here…"></textarea>
+          </div>
+        </div>
+        <div class="editor" data-lang="js">
+          <div class="editor__gutter" id="gutter-js"></div>
+          <div class="editor__code">
+            <pre class="editor__highlight" id="highlight-js" aria-hidden="true"></pre>
+            <textarea class="editor__input" id="input-js" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Write your JavaScript here…"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider" id="divider" role="separator" aria-orientation="vertical" tabindex="0"></div>
+
+    <section class="pane pane--preview" id="previewPane">
+      <div class="preview__bar">
+        <span class="live-indicator"><span class="live-indicator__dot"></span>Live preview</span>
+        <div class="preview__actions">
+          <button class="icon-btn" id="refreshBtn" title="Force refresh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 0115.3-6.4M21 12a9 9 0 01-15.3 6.4M3 5v5h5M21 19v-5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" id="popoutBtn" title="Open in new tab">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M14 3h7v7M21 3l-9 9M5 5h5M5 5v14h14v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="preview__frame-wrap">
+        <iframe id="previewFrame" title="Live output" sandbox="allow-scripts allow-modals allow-forms allow-popups allow-same-origin"></iframe>
+      </div>
+
+      <div class="console" id="consolePanel">
+        <button class="console__bar" id="consoleToggle" aria-expanded="false">
+          <svg class="console__chev" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Console
+          <span class="console__count" id="consoleCount" hidden>0</span>
+          <span class="tabs__spacer"></span>
+          <span class="console__clear" id="consoleClear">Clear</span>
+        </button>
+        <div class="console__body" id="consoleBody"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile view switch -->
+  <div class="mobile-switch" id="mobileSwitch">
+    <button class="mobile-switch__btn is-active" data-view="editor">Code</button>
+    <button class="mobile-switch__btn" data-view="preview">Preview</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
